@@ -43,8 +43,8 @@ def save_history():
 config  = load_config()
 history = load_history()
 
-ASK_NAME, ASK_FF, ASK_FFMAX, ASK_KEY = range(4)
-CHANGE_SETUP, CHANGE_FFMAX, CHANGE_FF = range(4, 7)
+ASK_NAME, ASK_URL, ASK_KEY = range(3)
+CHANGE_SETUP, CHANGE_FFMAX, CHANGE_FF = range(3, 6)
 
 # ── MAIN KEYBOARD ──────────────────────────────────────
 main_keyboard = ReplyKeyboardMarkup(
@@ -120,7 +120,7 @@ async def show_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ── CREATE ─────────────────────────────────────────────
 async def create(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📁 *STEP 1/4 — File Name*\n\n"
+        "📁 *STEP 1/3 — File Name*\n\n"
         "Send the mod file name\n\n"
         "✏️ *Example:*\n"
         "`PUBG MOBILE MOD MENU v3.5`\n"
@@ -134,31 +134,19 @@ async def create(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ask_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['name'] = update.message.text.strip()
     await update.message.reply_text(
-        "🔗 *STEP 2/4 — FF Download Link*\n\n"
-        "Send the *Free Fire* download URL\n\n"
+        "🔗 *STEP 2/3 — Download Link*\n\n"
+        "Send the download URL for this file\n\n"
         "✏️ *Example:*\n"
-        "`https://mediafire.com/file/xyz/ff.apk`\n"
-        "`https://t.me/c/xxx/128`",
+        "`https://mediafire.com/file/xyz/file.apk`\n"
+        "`https://drive.google.com/file/abc123`",
         parse_mode="Markdown"
     )
-    return ASK_FF
+    return ASK_URL
 
-async def ask_ff(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['ff_url'] = update.message.text.strip()
+async def ask_url(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data['file_url'] = update.message.text.strip()
     await update.message.reply_text(
-        "🔗 *STEP 3/4 — FF MAX Download Link*\n\n"
-        "Send the *Free Fire MAX* download URL\n\n"
-        "✏️ *Example:*\n"
-        "`https://mediafire.com/file/xyz/ffmax.apk`\n"
-        "`https://t.me/c/xxx/129`",
-        parse_mode="Markdown"
-    )
-    return ASK_FFMAX
-
-async def ask_ffmax(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['ffmax_url'] = update.message.text.strip()
-    await update.message.reply_text(
-        "🔐 *STEP 4/4 — KEY*\n\n"
+        "🔐 *STEP 3/3 — KEY*\n\n"
         "Send the key for this mod\n\n"
         "✏️ *Example:*\n"
         "`ARPAN-2025-FREE`\n"
@@ -173,16 +161,16 @@ async def ask_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     name      = context.user_data['name']
     key       = context.user_data['key']
-    ff_url    = context.user_data['ff_url']
-    ffmax_url = context.user_data['ffmax_url']
+    file_url  = context.user_data['file_url']
     setup_url = config['setup_url']
+    ffmax_url = config['ffmax_url']
 
-    # ── FF page link — only file name visible to users, URL hidden inside ──
-    obj1 = {"n": name + " FF", "u": ff_url, "t": int(time.time() * 1000)}
+    # ── This file's download page — URL hidden inside encoding ──
+    obj1 = {"n": name, "u": file_url, "t": int(time.time() * 1000)}
     encoded1 = base64.b64encode(json.dumps(obj1, separators=(',', ':')).encode()).decode()
     ff_page = f"{SITE_URL}?data={quote(encoded1)}"
 
-    # ── FF MAX page link — only file name visible to users, URL hidden inside ──
+    # ── FF MAX page — from saved config ──
     obj2 = {"n": name + " FF MAX", "u": ffmax_url, "t": int(time.time() * 1000)}
     encoded2 = base64.b64encode(json.dumps(obj2, separators=(',', ':')).encode()).decode()
     ffmax_page = f"{SITE_URL}?data={quote(encoded2)}"
@@ -200,28 +188,28 @@ async def ask_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     caption = (
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"╭━━━━ 〔NEW PANEL 𝗥𝗘𝗟𝗘𝗔𝗦𝗘  ━━━━╮\n"
-        f"✨ {name} :- [🔥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 🔥]({ff_page})\n"
-        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
-        f"╭━━━━ 〔 ⚡ 𝗙𝗙 𝗠𝗔𝗫 𝗩𝗘𝗥𝗦𝗜𝗢𝗡 〕━━━━╮\n"
-        f"  🚀 𝗚𝗘𝗧 𝗜𝗧 :- [🔥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 🔥]({ffmax_page})\n"
-        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
-        f"╭━━━━━ 〔 🔐 𝗦𝗘𝗖𝗥𝗘𝗧 𝗞𝗘𝗬 〕 ━━━━━╮\n"
-        f"  🔑 `{key}`\n"
-        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
-        f"╭━━━━━ 〔 🎬 𝗤𝗨𝗜𝗖𝗞 𝗦𝗘𝗧𝗨𝗣 ] ━━━━━╮\n"
-        f"   🎞️ [👉 𝗖𝗟𝗜𝗖𝗞 𝗛𝗘𝗥𝗘]({setup_url})\n"
-        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━ 〔💎 𝗣𝗥𝗘𝗠𝗜𝗨𝗠 𝗥𝗘𝗟𝗘𝗔𝗦𝗘  ━━━━╮\n"
+        f"✨ P2077KNG MOD MENU :- 🔥 DOWNLOAD 🔥\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━ 〔 ⚡ 𝗙𝗙 𝗠𝗔𝗫 𝗩𝗘𝗥𝗦𝗜𝗢𝗡 〕 ━━━━╮\n"
+        f"  🚀 GET IT :- 🔥 DOWNLOAD 🔥\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━━  〔 🔐 𝗦𝗘𝗖𝗥𝗘𝗧 𝗞𝗘𝗬 〕 ━━━━━╮\n"
+        f"  🔑 ABC123-XYZ789\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━━ 〔 🎬 𝗤𝗨𝗜𝗖𝗞 𝗦𝗘𝗧𝗨𝗣 ]  ━━━━━╮\n"
+        f"   🎞️ 👉 CLICK HERE\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━╯\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚡ 𝗦𝗧𝗔𝗧𝗨𝗦 : 𝗪𝗢𝗥𝗞𝗜𝗡𝗚 ✅\n"
-        f"⚡ 𝗨𝗣𝗗𝗔𝗧𝗘𝗗 : 𝗟𝗔𝗧𝗘𝗦𝗧 𝗩𝗘𝗥𝗦𝗜𝗢𝗡\n"
+        f"⚡ STATUS : WORKING ✅\n"
+        f"⚡ UPDATED : LATEST VERSION\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"> 🚫 𝗢𝗡𝗟𝗬 𝗙𝗢𝗥 𝗥𝗢𝗢𝗧 𝗨𝗦𝗘𝗥𝗦\n"
-        f" ⚠️ ⌈ 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟 𝗗𝗜𝗦𝗖𝗟𝗔𝗜𝗠𝗘𝗥 ⌋ ⚠️\n"
+        f"> 🚫 ONLY FOR ROOT USERS\n"
+        f" ⚠️ ⌈ OFFICIAL DISCLAIMER ⌋ ⚠️\n"
         f"> This post doesn't promote any illegal activities\n"
         f"> 🔗 https://telegra.ph/Disclaimer-11-25-17\n"
         f"━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    )
+)
 
     # ── Message 1 — confirmation ──
     await update.message.reply_text(
@@ -326,10 +314,9 @@ if __name__ == "__main__":
             MessageHandler(filters.Regex("^✅ Create Post$"), create)
         ],
         states={
-            ASK_NAME:  [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_name)],
-            ASK_FF:    [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ff)],
-            ASK_FFMAX: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ffmax)],
-            ASK_KEY:   [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_key)],
+            ASK_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_name)],
+            ASK_URL:  [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_url)],
+            ASK_KEY:  [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_key)],
         },
         fallbacks=[CommandHandler("cancel", cancel)]
     )
