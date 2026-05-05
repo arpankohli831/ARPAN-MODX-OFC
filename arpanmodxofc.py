@@ -1,4 +1,4 @@
-# bot.py
+# arpanmodxofc.py
 import base64
 import json
 import time
@@ -153,17 +153,17 @@ async def ask_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ffmax_url = config['ffmax_url']
     ff_url    = config['ff_url']
 
-    # Generate FF MAX page link
-    obj1 = {"n": name + " FF MAX", "u": ffmax_url, "t": int(time.time() * 1000)}
+    # ── FF page link — only file name visible to users, URL hidden inside ──
+    obj1 = {"n": name + " FF", "u": ff_url, "t": int(time.time() * 1000)}
     encoded1 = base64.b64encode(json.dumps(obj1, separators=(',', ':')).encode()).decode()
-    ffmax_page = f"{SITE_URL}?data={quote(encoded1)}"
+    ff_page = f"{SITE_URL}?data={quote(encoded1)}"
 
-    # Generate FF page link
-    obj2 = {"n": name + " FF", "u": ff_url, "t": int(time.time() * 1000)}
+    # ── FF MAX page link — only file name visible to users, URL hidden inside ──
+    obj2 = {"n": name + " FF MAX", "u": ffmax_url, "t": int(time.time() * 1000)}
     encoded2 = base64.b64encode(json.dumps(obj2, separators=(',', ':')).encode()).decode()
-    ff_page = f"{SITE_URL}?data={quote(encoded2)}"
+    ffmax_page = f"{SITE_URL}?data={quote(encoded2)}"
 
-    # Save to history
+    # ── Save to permanent history ──
     date_str = time.strftime("%d/%m/%Y %I:%M %p")
     history.append({
         "name":       name,
@@ -175,35 +175,38 @@ async def ask_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
     save_history()
 
     caption = (
-       
-        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        f"╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮\n"
-        f"🛡️ {name} :- [DOWNLOAD]({ff_page})\n"
-        f"╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯\n"
-        f"╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮\n"
-        f"  🛡️ USE THIS FF MAX:- [DOWNLOAD]({ffmax_page})\n"
-        f"╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯\n"
-        f"╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮\n"
-        f"  🔐 KEY:- `{key}`\n"
-        f"╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯\n"
-        f"╭┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╮\n"
-        f"   🎞️ SET-UP:- [CLICK HERE]({setup_url})\n"
-        f"╰┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈╯\n"
-        f"ONLY ROOT USERS\n"
-        f"⚠️ ⌈ 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟 𝗗𝗜𝗦𝗖𝗟𝗔𝗜𝗠𝗘𝗥 ⌋ ⚠️\n"
-        f"This post doesn't promote any illegal activities\n"
-        f"🔗 https://telegra.ph/Disclaimer-11-25-17\n"
-        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"╭━━━━ 〔NEW PANEL 𝗥𝗘𝗟𝗘𝗔𝗦𝗘  ━━━━╮\n"
+        f"✨ {name} :- [🔥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 🔥]({ff_page})\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━ 〔 ⚡ 𝗙𝗙 𝗠𝗔𝗫 𝗩𝗘𝗥𝗦𝗜𝗢𝗡 〕━━━━╮\n"
+        f"  🚀 𝗚𝗘𝗧 𝗜𝗧 :- [🔥 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 🔥]({ffmax_page})\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━━ 〔 🔐 𝗦𝗘𝗖𝗥𝗘𝗧 𝗞𝗘𝗬 〕 ━━━━━╮\n"
+        f"  🔑 `{key}`\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"╭━━━━━ 〔 🎬 𝗤𝗨𝗜𝗖𝗞 𝗦𝗘𝗧𝗨𝗣 ] ━━━━━╮\n"
+        f"   🎞️ [👉 𝗖𝗟𝗜𝗖𝗞 𝗛𝗘𝗥𝗘]({setup_url})\n"
+        f"╰━━━━━━━━━━━━━━━━━━━━━━╯\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"⚡ 𝗦𝗧𝗔𝗧𝗨𝗦 : 𝗪𝗢𝗥𝗞𝗜𝗡𝗚 ✅\n"
+        f"⚡ 𝗨𝗣𝗗𝗔𝗧𝗘𝗗 : 𝗟𝗔𝗧𝗘𝗦𝗧 𝗩𝗘𝗥𝗦𝗜𝗢𝗡\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"> 🚫 𝗢𝗡𝗟𝗬 𝗙𝗢𝗥 𝗥𝗢𝗢𝗧 𝗨𝗦𝗘𝗥𝗦\n"
+        f" ⚠️ ⌈ 𝗢𝗙𝗙𝗜𝗖𝗜𝗔𝗟 𝗗𝗜𝗦𝗖𝗟𝗔𝗜𝗠𝗘𝗥 ⌋ ⚠️\n"
+        f"> This post doesn't promote any illegal activities\n"
+        f"> 🔗 https://telegra.ph/Disclaimer-11-25-17\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━"
     )
 
-    # ── MESSAGE 1 — confirmation ──
+    # ── Message 1 — confirmation ──
     await update.message.reply_text(
         f"✅ *Done! Saved to history #{len(history)}*",
         parse_mode="Markdown",
         reply_markup=main_keyboard
     )
 
-    # ── MESSAGE 2 — caption alone (easy to copy) ──
+    # ── Message 2 — caption alone, easy to copy ──
     await update.message.reply_text(
         caption,
         parse_mode="Markdown",
