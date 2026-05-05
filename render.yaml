@@ -3,4 +3,4 @@ services:
     name: arpanmodxofc-bot
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python arpanmodxofc.py
+    startCommand: python3 arpanmodxofc.py
