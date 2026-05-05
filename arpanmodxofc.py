@@ -43,8 +43,8 @@ def save_history():
 config  = load_config()
 history = load_history()
 
-ASK_NAME, ASK_KEY = range(2)
-CHANGE_SETUP, CHANGE_FFMAX, CHANGE_FF = range(3, 6)
+ASK_NAME, ASK_FF, ASK_FFMAX, ASK_KEY = range(4)
+CHANGE_SETUP, CHANGE_FFMAX, CHANGE_FF = range(4, 7)
 
 # ── MAIN KEYBOARD ──────────────────────────────────────
 main_keyboard = ReplyKeyboardMarkup(
@@ -120,7 +120,7 @@ async def show_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ── CREATE ─────────────────────────────────────────────
 async def create(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📁 *STEP 1/2 — File Name*\n\n"
+        "📁 *STEP 1/4 — File Name*\n\n"
         "Send the mod file name\n\n"
         "✏️ *Example:*\n"
         "`PUBG MOBILE MOD MENU v3.5`\n"
@@ -134,7 +134,31 @@ async def create(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def ask_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['name'] = update.message.text.strip()
     await update.message.reply_text(
-        "🔐 *STEP 2/2 — KEY*\n\n"
+        "🔗 *STEP 2/4 — FF Download Link*\n\n"
+        "Send the *Free Fire* download URL\n\n"
+        "✏️ *Example:*\n"
+        "`https://mediafire.com/file/xyz/ff.apk`\n"
+        "`https://t.me/c/xxx/128`",
+        parse_mode="Markdown"
+    )
+    return ASK_FF
+
+async def ask_ff(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data['ff_url'] = update.message.text.strip()
+    await update.message.reply_text(
+        "🔗 *STEP 3/4 — FF MAX Download Link*\n\n"
+        "Send the *Free Fire MAX* download URL\n\n"
+        "✏️ *Example:*\n"
+        "`https://mediafire.com/file/xyz/ffmax.apk`\n"
+        "`https://t.me/c/xxx/129`",
+        parse_mode="Markdown"
+    )
+    return ASK_FFMAX
+
+async def ask_ffmax(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data['ffmax_url'] = update.message.text.strip()
+    await update.message.reply_text(
+        "🔐 *STEP 4/4 — KEY*\n\n"
         "Send the key for this mod\n\n"
         "✏️ *Example:*\n"
         "`ARPAN-2025-FREE`\n"
@@ -149,9 +173,9 @@ async def ask_key(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     name      = context.user_data['name']
     key       = context.user_data['key']
+    ff_url    = context.user_data['ff_url']
+    ffmax_url = context.user_data['ffmax_url']
     setup_url = config['setup_url']
-    ffmax_url = config['ffmax_url']
-    ff_url    = config['ff_url']
 
     # ── FF page link — only file name visible to users, URL hidden inside ──
     obj1 = {"n": name + " FF", "u": ff_url, "t": int(time.time() * 1000)}
@@ -302,8 +326,10 @@ if __name__ == "__main__":
             MessageHandler(filters.Regex("^✅ Create Post$"), create)
         ],
         states={
-            ASK_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_name)],
-            ASK_KEY:  [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_key)],
+            ASK_NAME:  [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_name)],
+            ASK_FF:    [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ff)],
+            ASK_FFMAX: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ffmax)],
+            ASK_KEY:   [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_key)],
         },
         fallbacks=[CommandHandler("cancel", cancel)]
     )
